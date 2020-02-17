@@ -1,7 +1,11 @@
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.GridLayout;
 import java.awt.Point;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionListener;
 import java.awt.event.MouseWheelEvent;
@@ -18,6 +22,7 @@ public class Panel extends JPanel {
 	private JLabel position = new JLabel();
 	private JTextField functionText = new JTextField();
 	private Point2D.Double[] ptsArr;
+	private Equation graphFunction = new Equation("");
 	private Point[] XaxisArr;
 	private Point[] YaxisArr;
 	private int Xaxisdx;
@@ -30,11 +35,12 @@ public class Panel extends JPanel {
 	Panel() {
 		position = new JLabel("(,)");
 		position.setForeground(Color.white);
-		//functionText.setForeground(Color.WHITE);
 		functionText.setColumns(10);
-		function();
-		add(position);
-		add(functionText);
+		setLayout(new BorderLayout());
+		function(graphFunction);
+		position.setHorizontalAlignment(JLabel.CENTER);
+		add(position, BorderLayout.NORTH);
+		add(functionText, BorderLayout.SOUTH);
 		addMouseMotionListener(new MouseMoveListener());
 		addMouseWheelListener(new WheelListener());
 	}
@@ -60,11 +66,13 @@ public class Panel extends JPanel {
 		**/
 	}
 
-	public void function() {
+	public void function(Equation fnc) {
 		//init graph points
 		double[] ptsX = DoubleStream.iterate(-50, i -> i + 1).limit(200).toArray();
-		double[] ptsY = DoubleStream.iterate(-50, i -> i + 1).limit(200).map(i -> (2 * Math.pow(i,2))).toArray();
+		double[] ptsY = DoubleStream.iterate(-50, i -> i + 1).limit(200).toArray(); //.map(i -> (2 * Math.pow(i,2))).toArray();
 
+		ptsY = applyFunction(ptsY,fnc);
+		
 		ptsArr = new Point2D.Double[200];
 		for (int i = 0; i < 200; i++) {
 			ptsArr[i] = new Point2D.Double(0, 0);
@@ -97,6 +105,10 @@ public class Panel extends JPanel {
 		axisCenter = new Point(0,0);
 		
 		count = 0;
+	}
+	
+	double[] applyFunction(double[] pts, Equation fnc) {
+		return pts;
 	}
 
 	class MouseMoveListener implements MouseMotionListener {
@@ -152,5 +164,29 @@ public class Panel extends JPanel {
 			}
 			repaint();
 		}
+	}
+	
+	class keyPressListener implements KeyListener {
+
+		@Override
+		public void keyPressed(KeyEvent e) {
+			// TODO Auto-generated method stub
+			if(e.getKeyCode() == KeyEvent.VK_ENTER) {
+				graphFunction.populate(functionText.getText());
+			}
+		}
+
+		@Override
+		public void keyReleased(KeyEvent arg0) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void keyTyped(KeyEvent arg0) {
+			// TODO Auto-generated method stub
+			
+		}
+		
 	}
 }
